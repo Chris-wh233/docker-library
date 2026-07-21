@@ -10,7 +10,7 @@ set -e
 arch=loongarch64
 #release=$1
 releasever=24.03
-version=24.03
+version=mainline
 if [ -z $version ]
 then
         echo "releasever or version is empty!!!"
@@ -19,7 +19,8 @@ fi
 
 output="openEuler-${version}.rootfs.${arch}.tar.gz"
 
-repos_baseos_url="https://eulermaker.openeuler.openatom.cn/api/ems2/repositories/openEuler-24.03-LTS-SP4-everything:loongarch/openEuler%3A24.03-LTS-SP4/loongarch64/"
+repos_baseos_url="https://eulermaker.openeuler.openatom.cn/api/ems4/repositories/openEuler-master-everything:loongarch/openEuler%3Amainline/loongarch64/"
+
 
 trap cleanup TERM EXIT
 
@@ -55,10 +56,18 @@ mkdir -pv ${repo_dir} || :
 ####################################################################
 cat > ${repo_conf} << EOF
 [baseos]
-name=openEuler-$releasever-sp4
+name=master
 baseurl=${repos_baseos_url}
 gpgcheck=0
 enabled=1
+priority=2
+excludepkgs="${exclude_pkgs}"
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-LOONGNIX
+[baseos-1]
+name=master-locl
+baseurl=${repos_baseos_url1}
+gpgcheck=0
+enabled=0
 priority=2
 excludepkgs="${exclude_pkgs}"
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-LOONGNIX

@@ -19,7 +19,7 @@ fi
 
 output="openEuler-${version}.rootfs.${arch}.tar.gz"
 
-repos_baseos_url="https://dl-cdn.openeuler.openatom.cn/openEuler-24.03-LTS-SP3/everything/loongarch64/"
+repos_baseos_url="https://eulermaker.openeuler.openatom.cn/api/ems3/repositories/openEuler-24.03-LTS-Next-everything:loongarch/openEuler%3A24.03-LTS-Next/loongarch64/"
 
 trap cleanup TERM EXIT
 
@@ -143,8 +143,10 @@ chroot ${rootfs} mknod /dev/null c 1 3
 chroot ${rootfs} chmod 666 /dev/null
 
 cp /etc/resolv.conf ${rootfs}/etc
-chroot ${rootfs} yum install -y $pkg_list
 
+#设置默认的/etc/localtime，修复python-dateutil测试失败
+chroot ${rootfs} ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+ 
 cur_dir=$(pwd)
 pushd ${rootfs} > /dev/null
 	if [ -e "${cur_dir}/${output}" ]; then

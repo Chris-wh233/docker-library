@@ -3,12 +3,13 @@
 REGISTRY	?=lcr.loongnix.cn
 ORGANIZATION	?=openeuler
 REPOSITORY	?=openeuler
-TAG		?=24.03-LTS-NEXT
+TAG		?=mainline
 LATEST		?=true
+
 
 IMAGE=$(REGISTRY)/$(ORGANIZATION)/$(REPOSITORY):$(TAG)
 LATEST_IMAGE=$(REGISTRY)/$(ORGANIZATION)/$(REPOSITORY):latest
-IMAGE_EULERMAKER=$(REGISTRY)/$(ORGANIZATION)/$(REPOSITORY):24.03-lts-next-loongarch
+IMAGE_EULERMAKER=$(REGISTRY)/$(ORGANIZATION)/$(REPOSITORY):mainline-loongarch
 
 default: image
 
@@ -26,7 +27,7 @@ image: rootfs
 		-t $(IMAGE_EULERMAKER) \
 		-f Dockerfile-eulermaker \
 		.
-	rm -rf openEuler-24.03.rootfs.loongarch64.tar.gz  openEuler-24.03.rootfs.loongarch64.tar.gz.md5
+	rm -rf openEuler-mainline.rootfs.loongarch64.tar.gz openEuler-mainline.rootfs.loongarch64.tar.gz.md5
 
 push:
 	docker push $(IMAGE)
