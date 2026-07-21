@@ -1,7 +1,21 @@
 From scratch
 MAINTAINER zhangwenlong@loongson.cn
 ADD openEuler-24.03.rootfs.loongarch64.tar.gz /
-RUN yum install -y git-lfs gdb-gdbserver
-RUN git lfs install
+RUN rm -rf /etc/yum.repos.d/openEuler.repo ;\
+    repos_baseos_url="https://eulermaker.openeuler.openatom.cn/api/ems3/repositories/openEuler-24.03-LTS-Next-everything:loongarch/openEuler%3A24.03-LTS-Next/loongarch64/"; \
+    yum install --repofrompath=local,$repos_baseos_url --nogpgcheck \
+    -y git-lfs gdb-gdbserver  basesystem bash ca-certificates openEuler-release openEuler-gpg-keys \
+    openEuler-repos chkconfig cracklib crypto-policies dnf \
+    expat gawk gdbm glib2 gmp gnupg2 gpgme grep ima-evm-utils-libs \
+    json-c mpfr ncurses-base procps-ng rpm findutils \
+    npth p11-kit p11-kit-trust pcre2 popt readline rootfiles \
+    rpm sed setup systemd-libs tzdata vim-minimal xz yum \
+    git git-core make gcc procps rpm-build findutils dnf-plugins-core rpmdevtools \
+    libdb selinux-policy selinux-policy-targeted openssl; \
+    rm -rf /etc/yum.repos.d/openEuler.repo ;\
+    yum reinstall --repofrompath=local,$repos_baseos_url --nogpgcheck -y systemd
+
 RUN sed -i 's|RPM_BUILD_NCPUS="%{getncpus}"|RPM_BUILD_NCPUS="%{expr:%{getncpus} > 32 ? %{getncpus} / 8 : 4}"|' /usr/lib/rpm/macros
+RUN git lfs install
+RUN echo "timeout=120" >> /etc/yum.conf ; echo "minrate=0" >> /etc/yum.conf ; echo "retries=5" >> /etc/yum.conf
 CMD ["/bin/bash"]

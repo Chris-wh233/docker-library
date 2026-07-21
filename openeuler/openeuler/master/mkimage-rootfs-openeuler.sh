@@ -152,7 +152,6 @@ chroot ${rootfs} mknod /dev/null c 1 3
 chroot ${rootfs} chmod 666 /dev/null
 
 cp /etc/resolv.conf ${rootfs}/etc
-#chroot ${rootfs} yum install -y $pkg_list --repofrompath=local,$repos_baseos_url --repofrompath=local,$repos_baseos_url1 --nogpgcheck --disablerepo=OS --disablerepo=everything --disablerepo=EPOL --disablerepo=debuginfo --disablerepo=source --disablerepo=update --disablerepo=update-source
 
 #设置默认的/etc/localtime，修复python-dateutil测试失败
 chroot ${rootfs} ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
