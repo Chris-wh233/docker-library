@@ -19,4 +19,5 @@ RUN rm -rf /etc/yum.repos.d/openEuler.repo ;\
 RUN sed -i 's|RPM_BUILD_NCPUS="%{getncpus}"|RPM_BUILD_NCPUS="%{expr:%{getncpus} > 64 ? %{getncpus} / 4 : 32}"|' /usr/lib/rpm/macros
 RUN git lfs install
 RUN echo "timeout=120" >> /etc/yum.conf ; echo "minrate=0" >> /etc/yum.conf ; echo "retries=5" >> /etc/yum.conf
+ENV CMAKE_POLICY_VERSION_MINIMUM=3.5
 CMD ["/bin/bash"]
