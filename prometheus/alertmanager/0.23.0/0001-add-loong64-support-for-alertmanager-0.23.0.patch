@@ -1,0 +1,77 @@
+From e4e6c8209906301f9b28f0042c3495ee90d9e5c1 Mon Sep 17 00:00:00 2001
+From: Wenlong Zhang <zhangwenlong@loongson.cn>
+Date: Sat, 1 Aug 2026 14:10:38 +0800
+Subject: [PATCH] add loong64 support for alertmanager 0.23.0
+
+---
+ Dockerfile      | 11 +++++------
+ Makefile.common | 10 ++++++----
+ 2 files changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/Dockerfile b/Dockerfile
+index b1d31b3..6fd3c67 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -1,12 +1,11 @@
+-ARG ARCH="amd64"
++ARG ARCH="loong64"
+ ARG OS="linux"
+-FROM quay.io/prometheus/busybox-${OS}-${ARCH}:latest
+-LABEL maintainer="The Prometheus Authors <prometheus-developers@googlegroups.com>"
++FROM lcr.loongnix.cn/prometheus/busybox:glibc-1.37.0
+ 
+-ARG ARCH="amd64"
++ARG ARCH="loong64"
+ ARG OS="linux"
+-COPY .build/${OS}-${ARCH}/amtool       /bin/amtool
+-COPY .build/${OS}-${ARCH}/alertmanager /bin/alertmanager
++COPY ./amtool       /bin/amtool
++COPY ./alertmanager /bin/alertmanager
+ COPY examples/ha/alertmanager.yml      /etc/alertmanager/alertmanager.yml
+ 
+ RUN mkdir -p /alertmanager && \
+diff --git a/Makefile.common b/Makefile.common
+index a1b1ca4..ce2db27 100644
+--- a/Makefile.common
++++ b/Makefile.common
+@@ -78,8 +78,8 @@ ifneq ($(shell which gotestsum),)
+ endif
+ endif
+ 
+-PROMU_VERSION ?= 0.12.0
+-PROMU_URL     := https://github.com/prometheus/promu/releases/download/v$(PROMU_VERSION)/promu-$(PROMU_VERSION).$(GO_BUILD_PLATFORM).tar.gz
++PROMU_VERSION ?= 0.14.0
++PROMU_URL     ?= https://github.com/Loongson-Cloud-Community/promu/releases/download/v$(PROMU_VERSION)/promu-$(PROMU_VERSION).$(GO_BUILD_PLATFORM)-abi2.0.tar.gz
+ 
+ GOLANGCI_LINT :=
+ GOLANGCI_LINT_OPTS ?=
+@@ -101,6 +101,8 @@ DOCKER_REPO             ?= prom
+ 
+ DOCKER_ARCHS            ?= amd64
+ 
++DOCKER_IMG_NAME         ?= $(DOCKER_REPO)/$(DOCKER_IMAGE_NAME)-linux-$*:$(DOCKER_IMAGE_TAG)
++
+ BUILD_DOCKER_ARCHS = $(addprefix common-docker-,$(DOCKER_ARCHS))
+ PUBLISH_DOCKER_ARCHS = $(addprefix common-docker-publish-,$(DOCKER_ARCHS))
+ TAG_DOCKER_ARCHS = $(addprefix common-docker-tag-latest-,$(DOCKER_ARCHS))
+@@ -243,7 +245,7 @@ common-tarball: promu
+ .PHONY: common-docker $(BUILD_DOCKER_ARCHS)
+ common-docker: $(BUILD_DOCKER_ARCHS)
+ $(BUILD_DOCKER_ARCHS): common-docker-%:
+-	docker build -t "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME)-linux-$*:$(DOCKER_IMAGE_TAG)" \
++	docker build -t "$(DOCKER_IMG_NAME)" \
+ 		-f $(DOCKERFILE_PATH) \
+ 		--build-arg ARCH="$*" \
+ 		--build-arg OS="linux" \
+@@ -273,7 +275,7 @@ $(PROMU):
+ 	$(eval PROMU_TMP := $(shell mktemp -d))
+ 	curl -s -L $(PROMU_URL) | tar -xvzf - -C $(PROMU_TMP)
+ 	mkdir -p $(FIRST_GOPATH)/bin
+-	cp $(PROMU_TMP)/promu-$(PROMU_VERSION).$(GO_BUILD_PLATFORM)/promu $(FIRST_GOPATH)/bin/promu
++	find $(PROMU_TMP)/ -type f -name promu -exec mv {} $(FIRST_GOPATH)/bin/promu \;
+ 	rm -r $(PROMU_TMP)
+ 
+ .PHONY: proto
+-- 
+2.43.7
+
