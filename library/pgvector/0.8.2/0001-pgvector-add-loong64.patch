@@ -1,0 +1,41 @@
+From 5de43703090c0ec751aa84c6627e1dd29ba33b4d Mon Sep 17 00:00:00 2001
+From: Huang Yang <huangyang@loongson.cn>
+Date: Tue, 4 Aug 2026 14:23:15 +0800
+Subject: [PATCH] pgvector add loong64
+
+---
+ Dockerfile | 4 ++--
+ Makefile   | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Dockerfile b/Dockerfile
+index 821fa23..3e183f2 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -1,8 +1,8 @@
+ # syntax=docker/dockerfile:1
+ 
+ ARG PG_MAJOR=17
+-ARG DEBIAN_CODENAME=bookworm
+-FROM postgres:$PG_MAJOR-$DEBIAN_CODENAME
++ARG DEBIAN_CODENAME=forky
++FROM lcr.loongnix.cn/library/postgres:$PG_MAJOR-$DEBIAN_CODENAME
+ ARG PG_MAJOR
+ 
+ ADD https://github.com/pgvector/pgvector.git#v0.8.2 /tmp/pgvector
+diff --git a/Makefile b/Makefile
+index 8bedb89..0594ebb 100644
+--- a/Makefile
++++ b/Makefile
+@@ -76,7 +76,7 @@ PG_MAJOR ?= 17
+ .PHONY: docker
+ 
+ docker:
+-	docker build --pull --no-cache --build-arg PG_MAJOR=$(PG_MAJOR) -t pgvector/pgvector:pg$(PG_MAJOR) -t pgvector/pgvector:$(EXTVERSION)-pg$(PG_MAJOR) .
++	docker build --pull --no-cache --build-arg PG_MAJOR=$(PG_MAJOR) -t lcr.loongnix.cn/library/pgvector/pgvector:pg$(PG_MAJOR) -t lcr.loongnix.cn/library/pgvector/pgvector:$(EXTVERSION)-pg$(PG_MAJOR) .
+ 
+ .PHONY: docker-release
+ 
+-- 
+2.43.0
+
