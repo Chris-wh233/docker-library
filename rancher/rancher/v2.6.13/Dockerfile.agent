@@ -1,0 +1,24 @@
+FROM lcr.loongnix.cn/rancher/rancher:v2.6.13 as rancher
+
+FROM lcr.loongnix.cn/library/debian:unstable-slim
+ARG ARCH=loong64
+
+ENV KUBECTL_VERSION v1.23.6
+RUN apt update && apt install -y --no-install-recommends curl ca-certificates jq git hostname iproute2 vim less \
+	bash-completion bind9-dnsutils acl openssh-client tar gzip xz-utils gawk sysstat && \
+    rm -rf /var/lib/apt/lists/* && \
+    curl -sL https://cloud.loongnix.cn/releases/loongarch64/kubernetes/kubernetes/${KUBECTL_VERSION}/kubernetes-client-linux-loong64.tar.gz | tar -xvzf - -C /usr/bin --strip-components=3 kubernetes/client/bin/kubectl && \
+    chmod +x /usr/bin/kubectl
+
+ENV LOGLEVEL_VERSION v0.1.5
+
+RUN curl -sLf https://cloud.loongnix.cn/releases/loongarch64/rancher/loglevel/${LOGLEVEL_VERSION}/loglevel-${ARCH}-${LOGLEVEL_VERSION}.tar.gz | tar xvzf - -C /usr/bin
+
+LABEL io.cattle.agent true
+ENV AGENT_IMAGE lcr.loongnix.cn/rancher/rancher-agent:v2.6.13
+ENV SSL_CERT_DIR /etc/kubernetes/ssl/certs
+COPY --from=rancher /var/lib/rancher-data /var/lib/rancher-data
+COPY --from=rancher /usr/bin/tini /usr/bin/
+COPY bins/agent run.sh kubectl-shell.sh shell-setup.sh /usr/bin/
+WORKDIR /var/lib/rancher
+ENTRYPOINT ["run.sh"]

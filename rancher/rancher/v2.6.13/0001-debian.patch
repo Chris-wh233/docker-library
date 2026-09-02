@@ -1,0 +1,24 @@
+diff --git a/package/jailer.sh b/package/jailer.sh
+index e2c9a6e..e94b6ed 100755
+--- a/package/jailer.sh
++++ b/package/jailer.sh
+@@ -11,7 +11,7 @@ fi
+ 
+ # Build the jail directory structure
+ mkdir -p /opt/jail/$NAME/dev
+-mkdir -p /opt/jail/$NAME/etc/ssl
++mkdir -p /opt/jail/$NAME/etc/ssl/certs
+ mkdir -p /opt/jail/$NAME/usr/bin
+ mkdir -p /opt/jail/$NAME/management-state/node/nodes
+ mkdir -p /opt/jail/$NAME/var/lib/rancher/management-state/bin
+@@ -27,7 +27,9 @@ fi
+ 
+ cp -r /lib /opt/jail/$NAME
+ cp -r /usr/lib /opt/jail/$NAME/usr
+-cp /var/lib/ca-certificates/ca-bundle.pem /opt/jail/$NAME/etc/ssl
++#cp /var/lib/ca-certificates/ca-bundle.pem /opt/jail/$NAME/etc/ssl
++cp /etc/ssl/certs/ca-certificates.crt /opt/jail/$NAME/etc/ssl/ca-bundle.pem
++cp /etc/ssl/certs/ca-certificates.crt /opt/jail/$NAME/etc/ssl/certs/
+ cp /etc/resolv.conf /opt/jail/$NAME/etc/
+ cp /etc/passwd /opt/jail/$NAME/etc/
+ cp /etc/hosts /opt/jail/$NAME/etc/

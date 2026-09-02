@@ -1,0 +1,15 @@
+diff --git a/package/system-agent-install.sh b/package/system-agent-install.sh
+index 8f30c62..adafdf8 100644
+--- a/package/system-agent-install.sh
++++ b/package/system-agent-install.sh
+@@ -440,6 +440,10 @@ setup_arch() {
+         ARCH=arm64
+         SUFFIX=-${ARCH}
+         ;;
++    loong64|loongarch64)
++        ARCH=loong64
++        SUFFIX=-${ARCH}
++        ;;
+     arm*)
+         ARCH=arm
+         SUFFIX=-${ARCH}hf
